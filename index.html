@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Destinations</title>
+
+  <link href="style.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+    }
+    .modal {
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  </style>
+</head>
+<body id="body" class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen p-6 transition-all">
+
+  <!-- Header -->
+  <div class="max-w-7xl mx-auto mb-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-4xl font-bold">🌍 Explore Destinations</h1>
+      <div class="flex gap-2 items-center">
+        <button id="loginBtn" class="bg-white text-blue-600 border border-blue-600 px-4 py-1 rounded hover:bg-blue-600 hover:text-white transition">Login</button>
+        <button id="signupBtn" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-800 transition">Sign Up</button>
+        <button id="darkToggle" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-black">Dark Mode</button>
+        <button id="toggleTheme" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-700">Switch Theme</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="bg-white p-4 rounded shadow mb-6 sticky top-0 z-10 backdrop-blur bg-opacity-80">
+    <form id="filterForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <input type="text" id="filterName" placeholder="Search by Name" class="border p-2 rounded" />
+      <input type="text" id="filterPlace" placeholder="Search by Place" class="border p-2 rounded" />
+      <div class="flex gap-2">
+        <input type="number" id="minPrice" placeholder="Min ₹" class="border p-2 w-1/2 rounded" />
+        <input type="number" id="maxPrice" placeholder="Max ₹" class="border p-2 w-1/2 rounded" />
+      </div>
+      <select id="sortOption" class="border p-2 rounded">
+        <option value="">Sort By</option>
+        <option value="priceAsc">Price ↑</option>
+        <option value="priceDesc">Price ↓</option>
+        <option value="nameAsc">Name A–Z</option>
+        <option value="nameDesc">Name Z–A</option>
+      </select>
+      <select id="filterFavorites" class="border p-2 rounded">
+        <option value="all">All</option>
+        <option value="favorites">❤️ Favorites</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- Search History -->
+  <div class="max-w-7xl mx-auto mb-6">
+    <h2 class="text-lg font-semibold mb-2">Recent Searches</h2>
+    <ul id="searchHistory" class="flex gap-2 flex-wrap text-sm text-gray-700"></ul>
+  </div>
+
+  <!-- Listing Cards -->
+  <div id="listing" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+  <!-- Add Button -->
+  <a href="add.html"
+     class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-800 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg z-50">
+    +
+  </a>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow hidden z-50">
+    ✅ Destination added successfully!
+  </div>
+
+  <!-- Share Button -->
+  <div class="fixed bottom-4 left-4 z-50">
+    <button onclick="shareSite()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-800">
+      📤 Share App
+    </button>
+  </div>
+
+  <!-- Query Form -->
+  <section class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-md card">
+    <h2 class="text-2xl font-bold mb-4 text-center">❓ Send a Query</h2>
+    <form id="queryForm" class="grid gap-4">
+      <input type="text" id="queryName" placeholder="Your Name" required class="border p-2 rounded" />
+      <input type="email" id="queryEmail" placeholder="Your Email" required class="border p-2 rounded" />
+      <textarea id="queryMessage" placeholder="Your Message" rows="4" required class="border p-2 rounded"></textarea>
+      <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-800 transition">
+        📨 Submit Query
+      </button>
+    </form>
+    <div id="queryToast" class="text-green-600 mt-4 hidden text-center font-semibold">
+      ✅ Query submitted! We'll get back to you soon.
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#0B1D40] text-white mt-16 pt-12 pb-6 px-4">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Keep exploring with our app</h3>
+        <p class="text-sm mb-4">Everything syncs between desktop and mobile. Plan once, explore anywhere.</p>
+        <div class="flex gap-3">
+          <a href="#"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" class="h-10" alt="App Store" /></a>
+          <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Get_it_on_Google_play.svg" class="h-10" alt="Google Play" /></a>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">About</h3>
+        <ul class="space-y-1 text-sm text-gray-300">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Student Discount</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Support</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Get Inspired</h3>
+        <ul class="space-y-1 text-sm text-gray-300">
+          <li><a href="#">Road Trip Ideas</a></li>
+          <li><a href="#">National Parks</a></li>
+          <li><a href="#">Famous Routes</a></li>
+          <li><a href="#">Voices from the Road</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Follow Us</h3>
+        <div class="flex gap-4 mt-2 text-xl">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-pinterest"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-10 border-t border-gray-600 pt-6 text-sm text-center text-gray-400">
+      <p>© 2025 Travel Listing App | <a href="#" class="hover:underline">Privacy Policy</a> • <a href="#" class="hover:underline">Terms</a> • <a href="#" class="hover:underline">Cookies</a></p>
+    </div>
+  </footer>
+
+  <!-- Itinerary Sidebar -->
+  <div id="itinerarySidebar" class="fixed top-0 right-0 w-80 h-full bg-white shadow-lg transform translate-x-full z-50 overflow-y-auto">
+    <div class="p-4 border-b flex justify-between items-center">
+      <h2 class="text-lg font-bold">🗺️ My Itinerary</h2>
+      <button onclick="toggleItinerary()" class="text-red-500 text-xl">✖️</button>
+    </div>
+    <ul id="itineraryList" class="p-4 space-y-2 text-gray-700"></ul>
+  </div>
+
+  <!-- Itinerary FAB -->
+  <button onclick="toggleItinerary()" class="fixed bottom-24 right-6 bg-indigo-600 text-white px-4 py-2 rounded-full shadow-md z-50 hover:bg-indigo-800">
+    🗺️ View Itinerary
+  </button>
+
+  <!-- Login/Signup Modal -->
+  <div id="authModal" class="fixed inset-0 hidden modal flex items-center justify-center z-50">
+    <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg relative">
+      <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl">&times;</button>
+      <h2 id="authTitle" class="text-2xl font-bold mb-4 text-center">Login</h2>
+      <form id="authForm" class="grid gap-4">
+        <input type="email" id="authEmail" placeholder="Email" required class="border p-2 rounded" />
+        <input type="password" id="authPassword" placeholder="Password" required class="border p-2 rounded" />
+        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-800 transition">Submit</button>
+        <p id="authSwitchText" class="text-sm text-center text-gray-600">
+          Don't have an account?
+          <a href="#" onclick="toggleAuthMode()" class="text-blue-600 hover:underline">Sign Up</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    AOS.init();
+
+    function shareSite() {
+      const url = window.location.href;
+      if (navigator.share) {
+        navigator.share({ title: 'Travel Listing App', url });
+      } else {
+        navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+      }
+    }
+
+    document.getElementById("queryForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("queryName").value;
+      const email = document.getElementById("queryEmail").value;
+      const message = document.getElementById("queryMessage").value;
+
+      if (name && email && message) {
+        document.getElementById("queryToast").classList.remove("hidden");
+        e.target.reset();
+      } else {
+        alert("Please fill all fields.");
+      }
+    });
+
+    let isLogin = true;
+    const authModal = document.getElementById("authModal");
+    const authTitle = document.getElementById("authTitle");
+    const authSwitchText = document.getElementById("authSwitchText");
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      isLogin = true; openModal();
+    });
+    document.getElementById("signupBtn").addEventListener("click", () => {
+      isLogin = false; openModal();
+    });
+
+    function openModal() {
+      authModal.classList.remove("hidden");
+      updateAuthModal();
+    }
+
+    function closeModal() {
+      authModal.classList.add("hidden");
+      document.getElementById("authForm").reset();
+    }
+
+    function toggleAuthMode() {
+      isLogin = !isLogin;
+      updateAuthModal();
+    }
+
+    function updateAuthModal() {
+      authTitle.textContent = isLogin ? "Login" : "Sign Up";
+      authSwitchText.innerHTML = isLogin
+        ? `Don't have an account? <a href="#" onclick="toggleAuthMode()" class="text-blue-600 hover:underline">Sign Up</a>`
+        : `Already have an account? <a href="#" onclick="toggleAuthMode()" class="text-blue-600 hover:underline">Login</a>`;
+    }
+
+    document.getElementById("authForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const email = document.getElementById("authEmail").value;
+      const password = document.getElementById("authPassword").value;
+      if (!email || !password) return alert("Please fill in all fields.");
+      alert(`${isLogin ? "Logged in" : "Signed up"} as ${email}`);
+      closeModal();
+    });
+
+    const itinerary = new Set();
+    function addToItinerary(place) {
+      itinerary.add(place); updateItineraryUI();
+    }
+    function updateItineraryUI() {
+      const list = document.getElementById("itineraryList");
+      list.innerHTML = "";
+      itinerary.forEach(place => {
+        const li = document.createElement("li");
+        li.className = "border p-2 rounded bg-gray-100";
+        li.textContent = place;
+        list.appendChild(li);
+      });
+    }
+    function toggleItinerary() {
+      document.getElementById("itinerarySidebar").classList.toggle("translate-x-full");
+    }
+  </script>
+</body>
+</html>

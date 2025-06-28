@@ -1,0 +1,90 @@
+/* === Glassmorphism Card === */
+.card {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* === Toast Animation === */
+#toast {
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Dark Mode === */
+.dark-mode {
+  background-color: #1a202c;
+  color: #f7fafc;
+}
+
+.dark-mode .card {
+  background: rgba(45, 55, 72, 0.6);
+  color: #edf2f7;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background-color: #2d3748;
+  color: #f7fafc;
+  border-color: #4a5568;
+}
+
+.dark-mode .bg-white {
+  background-color: #2d3748;
+}
+
+.dark-mode .text-gray-700 {
+  color: #cbd5e0;
+}
+
+/* === Smooth Theme Transitions === */
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* === Button Hover Glow === */
+button:hover, a:hover {
+  filter: brightness(1.1);
+  transition: filter 0.2s;
+}
+
+/* === Responsive Fixes === */
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem;
+  }
+
+  #filterForm {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* === Font Enhancements === */
+h1, h2, h3 {
+  letter-spacing: 0.5px;
+}
+
+input, select, textarea {
+  outline: none;
+}
