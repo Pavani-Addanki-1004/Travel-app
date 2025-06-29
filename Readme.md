@@ -61,7 +61,7 @@ travel-app/
 
 ## 🌐 Live Demo
 
-🔗 [Click here to view the app live](https://github.com/Pavani-Addanki-1004/Travel-app)  
+🔗 [Click here to view the app live](https://686154d65b0017e399aeb61a--bucolic-belekoy-75816c.netlify.app/)
 *(Replace with your actual GitHub Pages or Netlify link)*
 
 ---
